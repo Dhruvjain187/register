@@ -1,8 +1,17 @@
 import { userValidationSchema } from "../schema.js";
 import { ExpressError } from "../utils/ExpressError.js";
 
-const validateUser = (req, res, next) => {
-    const { error } = userValidationSchema(req.body)
+export const validateUser = (req, res, next) => {
+    console.log({ ...req.body })
+
+    const { error } = userValidationSchema.validate({
+        fullName: req.body.fullName,
+        dateOfBirth: req.body.dateOfBirth,
+        gender: req.body.gender,
+        email: req.body.email,
+        mobileNumber: req.body.mobileNumber,
+        password: req.body.password
+    })
 
     if (error) {
         const msg = error.details.map(el => el.message).join(',')
@@ -12,3 +21,5 @@ const validateUser = (req, res, next) => {
         next()
     }
 }
+
+export const data = 123

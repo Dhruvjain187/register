@@ -1,12 +1,17 @@
 import express from "express"
 import mongoose from "mongoose"
 import cors from "cors"
-// import { ExpressError } from "./utils/ExpressError"
+import dotenv from "dotenv"
 import { ExpressError } from "./utils/ExpressError.js"
 import { User } from "./model/user.js"
+import { storage } from "./cloudinary/index.js"
+import multer from "multer"
+import { validateUser } from "./middleware/validate.js"
 
+dotenv.config();
 const app = express()
 const port = 3000;
+const upload = multer({ storage })
 
 app.use(cors({
     origin: "*",
@@ -18,9 +23,27 @@ app.get("/", (req, res) => {
     res.send("hi")
 })
 
-app.post("/register", async (req, res, next) => {
-    res.send("hi")
-})
+// app.post("/register", async (req, res, next) => {
+//     console.log("hitting request")
+//     res.send("hi")
+// })
+
+app.post("/register", upload.single("profile"),
+    validateUser, async (req, res, next) => {
+        console.log(req.file, req.body)
+        const user = new User({
+            fullName: req.body.fullName,
+            dob: req.body.dateOfBirth,
+            gender: req.body.gender,
+            profile: req.file.path,
+            email: req.body.email,
+            number: req.body.mobileNumber,
+            password: req.body.password
+        })
+
+        await user.save()
+        res.status(200).send("Ok")
+    })
 
 app.all('*all', (req, res, next) => {
     next(new ExpressError('Page Not Found', 404))

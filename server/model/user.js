@@ -5,17 +5,34 @@ const { Schema } = mongoose;
 const userSchema = new Schema({
     fullName: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
-    dob: String,
-    gender: String,
-    profile: String,
-    email: {
+    dob: {
         type: String,
         required: true
     },
-    number: Number,
-    password: String
+    gender: {
+        type: String,
+        required: true
+    },
+    profile: {
+        type: String,
+        required: true
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true
+    },
+    number: {
+        type: String,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    },
 })
 
 const User = mongoose.model("User", userSchema)
